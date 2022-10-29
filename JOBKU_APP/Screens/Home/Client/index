@@ -1,0 +1,116 @@
+import React from 'react';
+import {
+  View,
+  Button,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {ContextForAuth} from '../../../Context/Context';
+import {Searchbar} from 'react-native-paper';
+import ClientData from '../../../mysql api/client';
+import {IconButton} from 'react-native-paper';
+import {BerandaStyle} from '../../../JOBKU RESC/componentStyles';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import moment from 'moment';
+
+const ClientPreview = createStackNavigator();
+
+const Client = ({navigation}) => {
+  const {state, logOut, variabels, passProfileData, getDataProfile, switchTo} =
+    React.useContext(ContextForAuth);
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [daftarPenawaranJasa, setDaftarPenawaranJasa] = React.useState([]);
+  const [daftarOpenBidding, setDaftarOpenBidding] = React.useState([]);
+
+  const onChangeSearch = query => setSearchQuery(query);
+
+  const ListEmptyComponent = () => {
+    return (
+      <View style={{paddingVertical: 100, paddingHorizontal: 100}}>
+        <Text>Belum ada data</Text>
+      </View>
+    );
+  };
+
+  React.useEffect(async () => {
+    getDataProfile();
+    if (state.userChoice == 'Client') {
+      await ClientData.get('/penawaranJasa4Home').then(response => {
+        console.log(response.data);
+        setDaftarPenawaranJasa(response.data);
+      });
+    } else {
+      await ClientData.get('/openBidding4Home').then(response => {
+        console.log(response.data);
+        setDaftarOpenBidding(response.data);
+      });
+    }
+  }, []);
+
+  return (
+    <View>
+      <ScrollView style={{marginBottom: 60}}>
+        {daftarPenawaranJasa.map((item, index) => {
+          return (
+            <View key={index} style={BerandaStyle.containerItem}>
+              <View style={BerandaStyle.headerCon}>
+                <Text style={{fontSize: 13, fontWeight: 'bold'}}>
+                  {item.nama_freelancer}
+                </Text>
+                <Text>{moment(item.tanggal).startOf('day').fromNow()}</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('PreviewPJF', {
+                    dataShow: item,
+                    profilGbre: item.fotoProfil,
+                  })
+                }
+                style={BerandaStyle.infoPart}>
+                <View style={{flex: 1}}>
+                  <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                    {item.judul_proyek}
+                  </Text>
+                  <Text numberOfLines={5}>{item.deskripsi_proyek}</Text>
+                </View>
+                <Image
+                  resizeMode="contain"
+                  style={BerandaStyle.Poster}
+                  source={{uri: item.url_gambar}}
+                />
+              </TouchableOpacity>
+              <View style={BerandaStyle.footerCon}>
+                <Text style={BerandaStyle.tagKetagori}>
+                  {item.nama_sub_kategori}
+                </Text>
+                <IconButton
+                  color={'blue'}
+                  icon="chat"
+                  size={25}
+                  onPress={() => console.log('Pressed')}
+                />
+              </View>
+            </View>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+};
+
+const ClientPStackScreen = () => (
+  <ClientPreview.Navigator>
+    <ClientPreview.Screen
+      options={{headerShown: false}}
+      name="BerandaClient"
+      component={Client}
+    />
+  </ClientPreview.Navigator>
+);
+
+export default ClientPStackScreen;
