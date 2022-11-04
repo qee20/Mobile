@@ -1,3 +1,3 @@
 import Axios from 'axios';
 
-export default Axios.create({baseURL: 'http://192.168.100.15:8000'});
+export default Axios.create({baseURL: 'hhttp://192.168.11.150:8000'});
