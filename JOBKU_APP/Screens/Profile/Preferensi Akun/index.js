@@ -18,7 +18,12 @@ const PreferensiAkun = ({navigation, route}) => {
   }, []);
 
   const LogOut = () => {
-    logOut();
+    auth()
+      .signOut()
+      .then(response => {
+        console.log('User signed out!', response);
+        logOut();
+      });
   };
 
   return (

@@ -152,9 +152,30 @@ const Freelancer_Form = ({route, navigation}) => {
   };
 
   const createFreelancer = async () => {
-    let usrc;
-    usrc = 'Freelancer';
-    sendInfo(usrc);
+    Client.post('/registerFreelancer', {
+      kode_pengguna: state.userId,
+      namaFreelancer: namaLengkap,
+      alamat: `${alamat}, ${village}, ${districts}, ${regency}, ${province}`,
+      tempatLahir: tempatLahir,
+      tanggalLahir: datex,
+      nomorHP: nomorHP,
+      nomorRekening: nomorRekening,
+      namaBank: selectedBank,
+      fotoProfil: urlImage,
+      status: 1,
+    })
+      .then(response => {
+        console.log(response);
+        Client.post('/getFreelancerdata', {
+          kode_pengguna: state.userId,
+        }).then(response => {
+          let usrc;
+          console.log(response);
+          usrc = 'Freelancer';
+          sendInfo(usrc);
+        });
+      })
+      .catch(error => alert(error));
   };
 
   React.useEffect(async () => {

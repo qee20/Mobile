@@ -145,10 +145,27 @@ export const ProviderforAuth = ({children}) => {
         setPassProfileData,
         notif,
         setNotif,
-        logIn: async response => {
-          userId = await AsyncStorage.getItem('userid');
-          token = await AsyncStorage.getItem('token');
-          dispatch({type: 'LOG_IN', token: token, userId: userId});
+        logIn: async UID => {
+          await Client.post('/login', {
+            UID: UID.UID,
+          })
+            .then(response => {
+              if (!response.data.auth) {
+                Alert.alert('Error', response.data.message, [
+                  {text: 'OK', onPress: () => console.log('OK Pressed')},
+                ]);
+              } else {
+                AsyncStorage.multiSet([
+                  ['userid', response.data.userid],
+                  ['token', response.data.token],
+                ]).then(async response => {
+                  userId = await AsyncStorage.getItem('userid');
+                  token = await AsyncStorage.getItem('token');
+                  dispatch({type: 'LOG_IN', token: token, userId: userId});
+                });
+              }
+            })
+            .catch(error => console.log(error));
         },
         sendInfo: async usrc => {
           AsyncStorage.setItem('userChoice', usrc).then(async () => {

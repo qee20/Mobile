@@ -7,7 +7,6 @@ import {SocialIcon} from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {Icon} from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = React.useState('');
@@ -16,19 +15,12 @@ const Login = ({navigation}) => {
 
   const loginEmail = async () => {
     try {
-      AsyncStorage.multiSet([
-        ['userid', email],
-        ['token', 'xoxoxo'],
-      ]).then(async response => {
-        logIn();
-      });
-
-      // await auth()
-      //   .signInWithEmailAndPassword(email, password)
-      //   .then(response => {
-      //     console.log(response);
-      //     logIn({UID: response.user.uid});
-      //   });
+      await auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(response => {
+          console.log(response);
+          logIn({UID: response.user.uid});
+        });
     } catch (error) {
       Alert.alert('Login', error.message, [{text: 'Ok'}]);
     }
@@ -102,7 +94,6 @@ const Login = ({navigation}) => {
           Atau
         </Text>
         <SocialIcon
-          disabled
           title="Login dengan Facebook"
           button
           type="facebook"

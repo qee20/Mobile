@@ -151,9 +151,32 @@ const Client_Form = ({route, navigation}) => {
   };
 
   const createClient = async () => {
-    navigation.navigate('AddCompanyInfo', {
-      kodeclient: 'response.data.useridc',
-    });
+    Client.post('/registerClient', {
+      kode_pengguna: state.userId,
+      namaClient: namaLengkap,
+      alamat: `${alamat}, ${village}, ${districts}, ${regency}, ${province}`,
+      tempatLahir: tempatLahir,
+      tanggalLahir: datex,
+      nomorHP: nomorHP,
+      nomorRekening: nomorRekening,
+      namaBank: selectedBank,
+      fotoProfil: urlImage,
+      status: 1,
+    })
+      .then(response => {
+        Client.post('/getClientdata', {
+          kode_pengguna: state.userId,
+        }).then(response => {
+          // let usrc;
+          // usrc = 'Client';
+          // sendInfo(usrc);
+          console.log(response.data.useridc);
+          navigation.navigate('AddCompanyInfo', {
+            kodeclient: response.data.useridc,
+          });
+        });
+      })
+      .catch(error => alert(error));
   };
 
   React.useEffect(async () => {

@@ -27,9 +27,18 @@ const index = ({navigation, route}) => {
   const [jenisPerusahaan, setJenisPerusahaan] = useState(1);
 
   const SaveCompanyInfo = () => {
-    let usrc;
-    usrc = 'Client';
-    sendInfo(usrc);
+    Client.post('/client/companyProfile', {
+      kode_client: kodeclient,
+      nama_perusahaan: namaPerusahaan,
+      nomor_telp_perusahaan: nomorTelepon,
+      website_perusahaan: websitePerusahaan,
+      jenis_perusahaan: jenisPerusahaan,
+    }).then(response => {
+      console.log(response.data);
+      let usrc;
+      usrc = 'Client';
+      sendInfo(usrc);
+    });
   };
 
   const Skip = () => {

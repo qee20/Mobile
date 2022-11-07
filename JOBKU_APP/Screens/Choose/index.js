@@ -10,17 +10,53 @@ const Choose = ({route, navigation}) => {
   const [choiceIndex, setChoiceIndex] = React.useState(0);
 
   const CheckAccountFreelancer = async () => {
-    navigation.navigate('Freelancer_Form', {
-      urlImage:
-        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.OlnxO753VRgHKDLLDzCKoAHaHw%26pid%3DApi&f=1',
-    });
+    Client.post('/getFreelancerdata', {
+      kode_pengguna: state.userId,
+    })
+      .then(response => {
+        if (!response.data.auth) {
+          Alert.alert('Pemeriksaan Akun', response.data.message, [
+            {
+              text: 'OK',
+              onPress: () =>
+                navigation.navigate('Freelancer_Form', {
+                  urlImage:
+                    'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.OlnxO753VRgHKDLLDzCKoAHaHw%26pid%3DApi&f=1',
+                }),
+            },
+          ]);
+        } else {
+          let usrc;
+          usrc = 'Freelancer';
+          sendInfo(usrc);
+        }
+      })
+      .catch(error => console.log(error));
   };
 
   const CheckAccountClient = () => {
-    navigation.navigate('Client_Form', {
-      urlImage:
-        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.OlnxO753VRgHKDLLDzCKoAHaHw%26pid%3DApi&f=1',
-    });
+    Client.post('/getClientdata', {
+      kode_pengguna: state.userId,
+    })
+      .then(response => {
+        if (!response.data.auth) {
+          Alert.alert('Pemeriksaan Akun', response.data.message, [
+            {
+              text: 'OK',
+              onPress: () =>
+                navigation.navigate('Client_Form', {
+                  urlImage:
+                    'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.OlnxO753VRgHKDLLDzCKoAHaHw%26pid%3DApi&f=1',
+                }),
+            },
+          ]);
+        } else {
+          let usrc;
+          usrc = 'Client';
+          sendInfo(usrc);
+        }
+      })
+      .catch(error => console.log(error));
   };
 
   const {state, sendInfo, setUserChoice, userChoice} =
